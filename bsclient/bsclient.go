@@ -5,6 +5,7 @@ package bsclient
 import (
 	"crypto/md5"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -17,12 +18,18 @@ const (
 	bsVersion = "2.4"
 )
 
+var (
+	errNoToken = errors.New("no token")
+)
+
+type errorsAPI struct {
+	Code int    `json:"code"`
+	Text string `json:"text"`
+}
+
 // errAPI represents an error returned by the API
 type errAPI struct {
-	Errors []struct {
-		Code int    `json:"code"`
-		Text string `json:"text"`
-	} `json:"errors"`
+	Errors []errorsAPI `json:"errors"`
 }
 
 func (e *errAPI) Error() string {
@@ -57,7 +64,7 @@ func (bs *BetaSeries) getToken() (string, error) {
 	if bs.token != nil {
 		return bs.token.Token, nil
 	}
-	return "", fmt.Errorf("no token")
+	return "", errNoToken
 }
 
 // NewBetaseriesClient creates a betaseries web client
@@ -73,6 +80,26 @@ func NewBetaseriesClient(key, login, password string) (*BetaSeries, error) {
 	return bs, err
 }
 
+func (bs *BetaSeries) doGet(u *url.URL) (*http.Response, error) {
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		log.Printf("error creating request for %s: %v", u.String(), err.Error())
+		return nil, err
+	}
+
+	resp, err := bs.do(req)
+	if err != nil {
+		log.Printf("error making GET request %s: %v", u.String(), err.Error())
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		apiErr := decodeErr(resp.Body)
+		log.Println(apiErr.Error())
+		return nil, apiErr
+	}
+	return resp, nil
+}
+
 func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-BetaSeries-Version", bs.version)
@@ -82,6 +109,14 @@ func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
 	}
 
 	return http.DefaultClient.Do(req)
+}
+
+func (bs *BetaSeries) decode(data interface{}, resp *http.Response, usedAPI, query string) error {
+	if err := json.NewDecoder(resp.Body).Decode(data); err != nil {
+		log.Printf("Error decoding using '%s' API for '%s' query :%v", usedAPI, query, err)
+		return err
+	}
+	return nil
 }
 
 func decodeErr(r io.Reader) *errAPI {
