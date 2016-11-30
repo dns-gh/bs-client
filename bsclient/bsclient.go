@@ -61,7 +61,7 @@ func (bs *BetaSeries) getToken() (string, error) {
 }
 
 // NewBetaseriesClient creates a betaseries web client
-func NewBetaseriesClient(key, login, password string) *BetaSeries {
+func NewBetaseriesClient(key, login, password string) (*BetaSeries, error) {
 	bs := &BetaSeries{
 		version: bsVersion,
 		baseURL: bsBaseURL,
@@ -69,8 +69,8 @@ func NewBetaseriesClient(key, login, password string) *BetaSeries {
 	}
 	// basic authentication.
 	// TODO: OAUTH 2.0
-	bs.retrieveToken(login, password)
-	return bs
+	err := bs.retrieveToken(login, password)
+	return bs, err
 }
 
 func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
@@ -84,16 +84,17 @@ func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
 	return http.DefaultClient.Do(req)
 }
 
-func decodeErr(r io.Reader) (err *errAPI) {
-	if jsonerr := json.NewDecoder(r).Decode(err); jsonerr != nil {
+func decodeErr(r io.Reader) *errAPI {
+	err := &errAPI{}
+	if jsonerr := json.NewDecoder(r).Decode(&err); jsonerr != nil {
 		log.Fatalf("Error decoding API error : %v", jsonerr)
 	}
-	return
+	return err
 }
 
-func (bs *BetaSeries) retrieveToken(login, password string) {
+func (bs *BetaSeries) retrieveToken(login, password string) error {
 	if len(login) == 0 || len(password) == 0 {
-		return
+		return nil
 	}
 
 	u, err := url.Parse(bs.baseURL + "/members/auth")
@@ -107,21 +108,22 @@ func (bs *BetaSeries) retrieveToken(login, password string) {
 
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		log.Fatalf("Error creating request for %s: %v\n", u.String(), err.Error())
+		return fmt.Errorf("Error creating request for %s: %v\n", u.String(), err.Error())
 	}
 
 	resp, err := bs.do(req)
 	if err != nil {
-		log.Fatalf("Error getting token :%v\n", err)
+		return fmt.Errorf("Error getting token :%v\n", err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalln(decodeErr(resp.Body).Error())
+		return fmt.Errorf(decodeErr(resp.Body).Error())
 	}
 
 	tokenData := &token{}
 	if err := json.NewDecoder(resp.Body).Decode(tokenData); err != nil {
-		log.Fatalf("Error decoding token response :%v\n", err)
+		return fmt.Errorf("Error decoding token response :%v\n", err)
 	}
 	bs.token = tokenData
+	return nil
 }
