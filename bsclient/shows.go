@@ -10,7 +10,6 @@ import (
 var (
 	errNoShowsFound      = errors.New("no shows found")
 	errNoCharactersFound = errors.New("no characters found")
-	errURLParsing        = errors.New("url parsing error")
 )
 
 type seasonDetails struct {
@@ -85,7 +84,7 @@ func (bs *BetaSeries) ShowsSearch(query string) ([]Show, error) {
 	defer resp.Body.Close()
 
 	data := &shows{}
-	err = bs.decode(data, resp, usedAPI, query)
+	err = bs.decode(data, resp, usedAPI, u.RawQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -121,8 +120,7 @@ func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 		return nil, errURLParsing
 	}
 	q := u.Query()
-	query := strconv.Itoa(id)
-	q.Set("id", query)
+	q.Set("id", strconv.Itoa(id))
 	u.RawQuery = q.Encode()
 
 	resp, err := bs.doGet(u)
@@ -132,7 +130,7 @@ func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 	defer resp.Body.Close()
 
 	data := &characters{}
-	err = bs.decode(data, resp, usedAPI, query)
+	err = bs.decode(data, resp, usedAPI, u.RawQuery)
 	if err != nil {
 		return nil, err
 	}

@@ -19,7 +19,8 @@ const (
 )
 
 var (
-	errNoToken = errors.New("no token")
+	errNoToken    = errors.New("no token")
+	errURLParsing = errors.New("url parsing error")
 )
 
 type errorsAPI struct {
