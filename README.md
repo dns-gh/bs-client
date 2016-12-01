@@ -2,8 +2,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/dns-gh/bs-client)](https://goreportcard.com/report/github.com/dns-gh/bs-client)
 
-[![GoDoc](https://godoc.org/github.com/dns-gh/bs-client?status.png)]
-(https://godoc.org/github.com/dns-gh/bs-client)
+[![GoDoc](https://godoc.org/github.com/dns-gh/bs-client/bsclient?status.png)]
+(https://godoc.org/github.com/dns-gh/bs-client/bsclient)
 
 bs-client is a web client for the betaseries website API
 
