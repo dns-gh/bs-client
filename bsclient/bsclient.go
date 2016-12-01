@@ -120,6 +120,7 @@ func (bs *BetaSeries) decode(data interface{}, resp *http.Response, usedAPI, que
 
 func decodeErr(r io.Reader) *errAPI {
 	err := &errAPI{}
+	// note that 404 error not found on 'picture, err = bs.PicturesShows(0, 100, 100)' is not handled by errAPI
 	if jsonerr := json.NewDecoder(r).Decode(&err); jsonerr != nil {
 		log.Fatalf("Error decoding API error : %v", jsonerr)
 	}
