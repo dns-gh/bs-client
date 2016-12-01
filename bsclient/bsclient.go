@@ -95,7 +95,6 @@ func (bs *BetaSeries) doGet(u *url.URL) (*http.Response, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		apiErr := decodeErr(resp.Body)
-		log.Println(apiErr.Error())
 		return nil, apiErr
 	}
 	return resp, nil
