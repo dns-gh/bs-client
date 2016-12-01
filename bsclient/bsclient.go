@@ -1,5 +1,4 @@
 // Package bsclient implements a web client for the betaseries API
-// - original code from https://github.com/zaibon/tget
 package bsclient
 
 import (
