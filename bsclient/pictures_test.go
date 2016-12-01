@@ -16,7 +16,7 @@ func (s *MySuite) TestPicturesShows(c *C) {
 
 	picture, err = bs.PicturesShows(1, 100, 100)
 	c.Assert(err, IsNil)
-	c.Assert(len(picture), Equals, 10985)
+	c.Assert(len(picture), Equals, 10986)
 
 	picture, err = bs.PicturesShows(0, 100, 100)
 	c.Assert(err, NotNil)
