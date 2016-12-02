@@ -10,6 +10,9 @@ import (
 var (
 	errNoShowsFound      = errors.New("no shows found")
 	errNoCharactersFound = errors.New("no characters found")
+	errNoVideosFound     = errors.New("no videos found")
+	errNoSingleIDUsed    = errors.New("no single id used")
+	errIDNotProperlySet  = errors.New("id not properly set")
 )
 
 type seasonDetails struct {
@@ -209,4 +212,62 @@ func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]Sho
 	}
 
 	return data.Shows, nil
+}
+
+// Video represents the video data returned by the betaserie API
+type Video struct {
+	ID         int    `json:"id"`
+	ShowID     int    `json:"show_id"`
+	YoutubeID  string `json:"youtube_id"`
+	YoutubeURL string `json:"youtube_url"`
+	Title      string `json:"title"`
+	Season     int    `json:"season"`
+	Episode    int    `json:"episode"`
+	Login      string `json:"login"`
+	LoginID    int    `json:"login_id"`
+}
+
+type videos struct {
+	Videos []Video       `json:"videos"`
+	Errors []interface{} `json:"errors"`
+}
+
+// ShowsVideos returns a slice of videos added by the betaseries members
+// on a specific show using the show 'id' or 'tvdbID' (strictly positive)
+// Note: do not use both ids, it will return an error
+func (bs *BetaSeries) ShowsVideos(id, tvdbID int) ([]Video, error) {
+	usedAPI := "/shows/videos"
+	u, err := url.Parse(bs.baseURL + usedAPI)
+	if err != nil {
+		return nil, errURLParsing
+	}
+	q := u.Query()
+	if id > 0 && tvdbID > 0 {
+		return nil, errNoSingleIDUsed
+	} else if id > 0 {
+		q.Set("id", strconv.Itoa(id))
+	} else if tvdbID > 0 {
+		q.Set("thetvdb_id ", strconv.Itoa(tvdbID))
+	} else {
+		return nil, errIDNotProperlySet
+	}
+	u.RawQuery = q.Encode()
+
+	resp, err := bs.doGet(u)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	data := &videos{}
+	err = bs.decode(data, resp, usedAPI, u.RawQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data.Videos) < 1 {
+		return nil, errNoVideosFound
+	}
+
+	return data.Videos, nil
 }

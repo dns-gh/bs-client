@@ -2,6 +2,7 @@ package bsclient
 
 import (
 	"os"
+	"strings"
 
 	. "gopkg.in/check.v1"
 )
@@ -84,4 +85,31 @@ func (s *MySuite) TestShowsList(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(len(shows), Equals, 1)
 	c.Assert(shows[0].ID, Equals, "13842")
+}
+
+func (s *MySuite) TestShowsVideos(c *C) {
+	key := os.Getenv("BS_API_KEY")
+	bs, err := NewBetaseriesClient(key, "", "")
+	c.Assert(err, IsNil)
+	videos, err := bs.ShowsVideos(1, 0)
+	c.Assert(err, IsNil)
+	c.Assert(len(videos), Equals, 6)
+	c.Assert(strings.Contains(videos[0].YoutubeURL, "http"), Equals, true)
+
+	videos, err = bs.ShowsVideos(0, 1)
+	c.Assert(err, NotNil)
+	c.Assert(err, DeepEquals, &errAPI{
+		[]errorsAPI{err4001},
+	})
+	c.Assert(len(videos), Equals, 0)
+
+	videos, err = bs.ShowsVideos(1, 1)
+	c.Assert(err, NotNil)
+	c.Assert(err, Equals, errNoSingleIDUsed)
+	c.Assert(len(videos), Equals, 0)
+
+	videos, err = bs.ShowsVideos(0, 0)
+	c.Assert(err, NotNil)
+	c.Assert(err, Equals, errIDNotProperlySet)
+	c.Assert(len(videos), Equals, 0)
 }
