@@ -26,9 +26,9 @@ type news struct {
 
 // NewsLast returns a slice of news of tv shows
 // If 'number' is strictly negative, it returns a default of 10 news maximum.
-// THe 'tailored' parameter returns tv show news of the identified member.
+// The 'tailored' parameter returns tv show news of the identified member.
 func (bs *BetaSeries) NewsLast(number int, tailored bool) ([]News, error) {
-	usedAPI := "/planning/general"
+	usedAPI := "/news/last"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
 		return nil, errURLParsing
