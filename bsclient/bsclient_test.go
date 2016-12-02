@@ -18,8 +18,9 @@ func (s *MySuite) TestNewBS(c *C) {
 	bs, err := NewBetaseriesClient("", "", "")
 	c.Assert(err, IsNil)
 	expected := &BetaSeries{
-		version: bsVersion,
-		baseURL: bsBaseURL,
+		version:    bsVersion,
+		baseURL:    bsBaseURL,
+		httpClient: bs.httpClient,
 	}
 	c.Assert(bs, DeepEquals, expected)
 }
@@ -29,8 +30,9 @@ func (s *MySuite) TestNewBSGetTokenWithoutAPIKey(c *C) {
 	c.Assert(err.Error(), Equals, "Veuillez spécifier une clé API.\n")
 	c.Assert(bs, NotNil)
 	expected := &BetaSeries{
-		version: bsVersion,
-		baseURL: bsBaseURL,
+		version:    bsVersion,
+		baseURL:    bsBaseURL,
+		httpClient: bs.httpClient,
 	}
 	c.Assert(bs, DeepEquals, expected)
 }

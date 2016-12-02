@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 const (
@@ -54,10 +56,11 @@ type token struct {
 
 // BetaSeries represents the web client to the BetaSeries API
 type BetaSeries struct {
-	baseURL string
-	version string
-	key     string
-	token   *token
+	baseURL    string
+	version    string
+	key        string
+	token      *token
+	httpClient *http.Client
 }
 
 func (bs *BetaSeries) getToken() (string, error) {
@@ -69,10 +72,20 @@ func (bs *BetaSeries) getToken() (string, error) {
 
 // NewBetaseriesClient creates a betaseries web client
 func NewBetaseriesClient(key, login, password string) (*BetaSeries, error) {
+	var netTransport = &http.Transport{
+		Dial: (&net.Dialer{
+			Timeout: 5 * time.Second,
+		}).Dial,
+		TLSHandshakeTimeout: 5 * time.Second,
+	}
 	bs := &BetaSeries{
 		version: bsVersion,
 		baseURL: bsBaseURL,
 		key:     key,
+		httpClient: &http.Client{
+			Timeout:   time.Second * 10,
+			Transport: netTransport,
+		},
 	}
 	// basic authentication.
 	// TODO: OAUTH 2.0
@@ -107,7 +120,7 @@ func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
 		req.Header.Set("X-BetaSeries-Token", bs.token.Token)
 	}
 
-	return http.DefaultClient.Do(req)
+	return bs.httpClient.Do(req)
 }
 
 func (bs *BetaSeries) decode(data interface{}, resp *http.Response, usedAPI, query string) error {
