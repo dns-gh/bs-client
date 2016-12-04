@@ -42,9 +42,9 @@ type Show struct {
 	Status         string          `json:"status"`
 	Language       string          `json:"language"`
 	Notes          struct {
-		Total string `json:"total"`
-		//Mean  string `json:"mean"` // waiting for fix https://www.betaseries.com/bugs/api/380
-		User int `json:"user"`
+		Total int     `json:"total"`
+		Mean  float32 `json:"mean"`
+		User  int     `json:"user"`
 	} `json:"notes"`
 	InAccount bool `json:"in_account"`
 	Images    struct {
