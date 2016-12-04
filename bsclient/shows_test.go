@@ -35,6 +35,25 @@ func (s *MySuite) TestShowsSearch(c *C) {
 	c.Assert(err, Equals, errNoShowsFound)
 }
 
+func (s *MySuite) TestShowsRandom(c *C) {
+	key := os.Getenv("BS_API_KEY")
+	bs, err := NewBetaseriesClient(key, "", "")
+	c.Assert(err, IsNil)
+	shows, err := bs.ShowsRandom(1, false)
+	c.Assert(err, IsNil)
+	c.Assert(len(shows), Equals, 1)
+	c.Assert(len(shows[0].Language) > 0, Equals, true)
+
+	shows, err = bs.ShowsRandom(0, false)
+	c.Assert(err, NotNil)
+	c.Assert(err, Equals, errNoShowsFound)
+
+	shows, err = bs.ShowsRandom(1, true)
+	c.Assert(err, IsNil)
+	c.Assert(len(shows), Equals, 1)
+	c.Assert(len(shows[0].Language), Equals, 0)
+}
+
 func (s *MySuite) TestShowsCharacters(c *C) {
 	key := os.Getenv("BS_API_KEY")
 	bs, err := NewBetaseriesClient(key, "", "")

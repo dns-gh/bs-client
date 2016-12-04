@@ -43,27 +43,31 @@ type Show struct {
 	Language       string          `json:"language"`
 	Notes          struct {
 		Total string `json:"total"`
-		Mean  string `json:"mean"`
-		User  int    `json:"user"`
+		//Mean  string `json:"mean"` // waiting for fix https://www.betaseries.com/bugs/api/380
+		User int `json:"user"`
 	} `json:"notes"`
 	InAccount bool `json:"in_account"`
 	Images    struct {
+		Show   string `json:"show"`
+		Banner string `json:"banner"`
+		Box    string `json:"box"`
 		Poster string `json:"poster"`
 	} `json:"images"`
-	Aliases []interface{} `json:"aliases"`
+	Aliases []string `json:"aliases"`
 	User    struct {
-		Archived  bool        `json:"archived"`
-		Favorited bool        `json:"favorited"`
-		Remaining int         `json:"remaining"`
-		Status    int         `json:"status"`
-		Last      string      `json:"last"`
-		Tags      interface{} `json:"tags"`
+		Archived  bool   `json:"archived"`
+		Favorited bool   `json:"favorited"`
+		Remaining int    `json:"remaining"`
+		Status    int    `json:"status"`
+		Last      string `json:"last"`
+		Tags      string `json:"tags"`
 	} `json:"user"`
 	ResourceURL string `json:"resource_url"`
 }
 
 type shows struct {
-	Shows []Show `json:"shows"`
+	Shows  []Show        `json:"shows"`
+	Errors []interface{} `json:"errors"`
 }
 
 // ShowItem represents the show data returned by the betaseries API.
@@ -117,6 +121,26 @@ func (bs *BetaSeries) ShowsSearch(query string) ([]Show, error) {
 	q.Set("title", strings.ToLower(query))
 	q.Set("order", "popularity")
 	q.Set("nbpp", "100")
+	u.RawQuery = q.Encode()
+
+	return bs.doGetShows(u, usedAPI)
+}
+
+// ShowsRandom returns a slice of random shows. The maximum size of the slice is given
+// by the 'num' parameter. If you want to get only summarized info, use the 'summary parameter.
+func (bs *BetaSeries) ShowsRandom(num int, summary bool) ([]Show, error) {
+	usedAPI := "/shows/random"
+	u, err := url.Parse(bs.baseURL + usedAPI)
+	if err != nil {
+		return nil, errURLParsing
+	}
+	q := u.Query()
+	if num >= 0 {
+		q.Set("nb", strconv.Itoa(num))
+	}
+	if summary {
+		q.Set("summary", strconv.FormatBool(summary))
+	}
 	u.RawQuery = q.Encode()
 
 	return bs.doGetShows(u, usedAPI)
