@@ -79,12 +79,12 @@ func (s *MySuite) TestShowsList(c *C) {
 	shows, err := bs.ShowsList("", "", -1, 100)
 	c.Assert(err, IsNil)
 	c.Assert(len(shows), Equals, 100)
-	c.Assert(shows[0].ID, Equals, "425")
+	c.Assert(shows[0].ID, Equals, 425)
 
 	shows, err = bs.ShowsList("", "", 1, 100)
 	c.Assert(err, IsNil)
 	c.Assert(len(shows), Equals, 100)
-	c.Assert(shows[0].ID, Equals, "481")
+	c.Assert(shows[0].ID, Equals, 481)
 
 	// timestamp to 01-01-3000
 	shows, err = bs.ShowsList("32503680000", "", 1, 100)
@@ -103,7 +103,7 @@ func (s *MySuite) TestShowsList(c *C) {
 	shows, err = bs.ShowsList("1451606400", "test", -1, 10)
 	c.Assert(err, IsNil)
 	c.Assert(len(shows), Equals, 1)
-	c.Assert(shows[0].ID, Equals, "13842")
+	c.Assert(shows[0].ID, Equals, 13842)
 }
 
 func (s *MySuite) TestShowsVideos(c *C) {

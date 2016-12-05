@@ -70,25 +70,6 @@ type shows struct {
 	Errors []interface{} `json:"errors"`
 }
 
-// ShowItem represents the show data returned by the betaseries API.
-// ShowItem (and showsList) are used exclusively for the shows/list api call
-// since ID and ThetvdbID are string and not int
-// -> waiting for potential betaseries API changes to use the shows struct directly.
-type ShowItem struct {
-	ID        string `json:"id"`
-	ThetvdbID string `json:"thetvdb_id"`
-	ImdbID    string `json:"imdb_id"`
-	Title     string `json:"title"`
-	Seasons   string `json:"seasons"`
-	Episodes  string `json:"episodes"`
-	Followers string `json:"followers"`
-}
-
-type showsList struct {
-	Shows  []ShowItem    `json:"shows"`
-	Errors []interface{} `json:"errors"`
-}
-
 func (bs *BetaSeries) doGetShows(u *url.URL, usedAPI string) ([]Show, error) {
 	resp, err := bs.doGet(u)
 	if err != nil {
@@ -197,7 +178,7 @@ func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 // 'starting' : only displays shows beginning with the specified string (optional)
 // 'start' : show id number to begin the listing with (default 0, optional)
 // 'limit' : maximum size of the returned slice (default to everything, optional)
-func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]ShowItem, error) {
+func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]Show, error) {
 	usedAPI := "/shows/list"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
@@ -219,23 +200,7 @@ func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]Sho
 	}
 	u.RawQuery = q.Encode()
 
-	resp, err := bs.doGet(u)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	data := &showsList{}
-	err = bs.decode(data, resp, usedAPI, u.RawQuery)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(data.Shows) < 1 {
-		return nil, errNoShowsFound
-	}
-
-	return data.Shows, nil
+	return bs.doGetShows(u, usedAPI)
 }
 
 // Video represents the video data returned by the betaserie API
