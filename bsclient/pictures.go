@@ -32,7 +32,7 @@ func (bs *BetaSeries) PicturesShows(id, width, height int) (string, error) {
 		q.Set("height", strconv.Itoa(height))
 	}
 	u.RawQuery = q.Encode()
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return "", err
 	}

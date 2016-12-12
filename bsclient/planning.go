@@ -47,7 +47,7 @@ type episodes struct {
 }
 
 func (bs *BetaSeries) doGetPlanning(u *url.URL, usedAPI string) ([]Episode, error) {
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}

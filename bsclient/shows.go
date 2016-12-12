@@ -76,7 +76,7 @@ type shows struct {
 }
 
 func (bs *BetaSeries) doGetShows(u *url.URL, usedAPI string) ([]Show, error) {
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 	q.Set("id", strconv.Itoa(id))
 	u.RawQuery = q.Encode()
 
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}
@@ -247,7 +247,7 @@ func (bs *BetaSeries) ShowsVideos(id, tvdbID int) ([]Video, error) {
 	}
 	u.RawQuery = q.Encode()
 
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}

@@ -93,24 +93,7 @@ func NewBetaseriesClient(key, login, password string) (*BetaSeries, error) {
 	return bs, err
 }
 
-func (bs *BetaSeries) doGet(u *url.URL) (*http.Response, error) {
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := bs.do(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		apiErr := decodeErr(resp.Body)
-		return nil, apiErr
-	}
-	return resp, nil
-}
-
-func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
+func (bs *BetaSeries) doRequest(req *http.Request) (*http.Response, error) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-BetaSeries-Version", bs.version)
 	req.Header.Set("X-BetaSeries-Key", bs.key)
@@ -119,6 +102,23 @@ func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
 	}
 
 	return bs.httpClient.Do(req)
+}
+
+func (bs *BetaSeries) do(method string, u *url.URL) (*http.Response, error) {
+	req, err := http.NewRequest(method, u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := bs.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		apiErr := decodeErr(resp.Body)
+		return nil, apiErr
+	}
+	return resp, nil
 }
 
 func (bs *BetaSeries) decode(data interface{}, resp *http.Response, usedAPI, query string) error {
@@ -136,11 +136,12 @@ func decodeErr(r io.Reader) *errAPI {
 }
 
 func (bs *BetaSeries) retrieveToken(login, password string) error {
+	usedAPI := "/members/auth"
 	if len(login) == 0 || len(password) == 0 {
 		return nil
 	}
 
-	u, err := url.Parse(bs.baseURL + "/members/auth")
+	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -149,23 +150,16 @@ func (bs *BetaSeries) retrieveToken(login, password string) error {
 	q.Set("password", fmt.Sprintf("%x", md5.Sum([]byte(password))))
 	u.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("POST", u.String(), nil)
+	resp, err := bs.do("POST", u)
 	if err != nil {
-		return fmt.Errorf("Error creating request for %s: %v\n", u.String(), err.Error())
-	}
-
-	resp, err := bs.do(req)
-	if err != nil {
-		return fmt.Errorf("Error getting token :%v\n", err)
+		return err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf(decodeErr(resp.Body).Error())
-	}
 
 	tokenData := &token{}
-	if err := json.NewDecoder(resp.Body).Decode(tokenData); err != nil {
-		return fmt.Errorf("Error decoding token response :%v\n", err)
+	err = bs.decode(tokenData, resp, usedAPI, u.RawQuery)
+	if err != nil {
+		return err
 	}
 	bs.token = tokenData
 	return nil

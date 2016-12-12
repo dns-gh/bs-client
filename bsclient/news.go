@@ -38,7 +38,7 @@ func (bs *BetaSeries) NewsLast(number int, tailored bool) ([]News, error) {
 	q.Set("tailored", strconv.FormatBool(tailored))
 	u.RawQuery = q.Encode()
 
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}
