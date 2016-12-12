@@ -109,7 +109,6 @@ func (bs *BetaSeries) do(method string, u *url.URL) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	resp, err := bs.doRequest(req)
 	if err != nil {
 		return nil, err
