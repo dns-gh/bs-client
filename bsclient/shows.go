@@ -22,10 +22,12 @@ type seasonDetails struct {
 
 // Show represents the show data returned by the betaserie API
 type Show struct {
-	ID             int             `json:"id"`
-	ThetvdbID      int             `json:"thetvdb_id"`
-	ImdbID         string          `json:"imdb_id"`
-	Title          string          `json:"title"`
+	// used in episodes/... and shows/... API endpoints
+	ID        int    `json:"id"`
+	ThetvdbID int    `json:"thetvdb_id"`
+	ImdbID    string `json:"imdb_id"`
+	Title     string `json:"title"`
+	// specific to shows/... API endpoints
 	Description    string          `json:"description"`
 	Seasons        string          `json:"seasons"`
 	SeasonsDetails []seasonDetails `json:"seasons_details"`
@@ -63,6 +65,9 @@ type Show struct {
 		Tags      string `json:"tags"`
 	} `json:"user"`
 	ResourceURL string `json:"resource_url"`
+	// specific to episodes/... API endpoints
+	Remaining int       `json:"remaining"`
+	Unseen    []Episode `json:"unseen"`
 }
 
 type shows struct {

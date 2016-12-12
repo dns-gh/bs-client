@@ -96,13 +96,11 @@ func NewBetaseriesClient(key, login, password string) (*BetaSeries, error) {
 func (bs *BetaSeries) doGet(u *url.URL) (*http.Response, error) {
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		log.Printf("error creating request for %s: %v", u.String(), err.Error())
 		return nil, err
 	}
 
 	resp, err := bs.do(req)
 	if err != nil {
-		log.Printf("error making GET request %s: %v", u.String(), err.Error())
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
@@ -125,7 +123,6 @@ func (bs *BetaSeries) do(req *http.Request) (*http.Response, error) {
 
 func (bs *BetaSeries) decode(data interface{}, resp *http.Response, usedAPI, query string) error {
 	if err := json.NewDecoder(resp.Body).Decode(data); err != nil {
-		log.Printf("Error decoding using '%s' API for '%s' query :%v", usedAPI, query, err)
 		return err
 	}
 	return nil
@@ -134,9 +131,7 @@ func (bs *BetaSeries) decode(data interface{}, resp *http.Response, usedAPI, que
 func decodeErr(r io.Reader) *errAPI {
 	err := &errAPI{}
 	// note that 404 error not found on 'picture, err = bs.PicturesShows(0, 100, 100)' is not handled by errAPI
-	if jsonerr := json.NewDecoder(r).Decode(&err); jsonerr != nil {
-		log.Printf("Error decoding API error : %v", jsonerr)
-	}
+	json.NewDecoder(r).Decode(&err)
 	return err
 }
 
