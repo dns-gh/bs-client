@@ -29,9 +29,9 @@ type Episode struct {
 	Description string `json:"description"`
 	Date        string `json:"date"`
 	Note        struct {
-		Total int `json:"total"`
-		Mean  int `json:"mean"`
-		User  int `json:"user"`
+		Total string `json:"total"`
+		Mean  string `json:"mean"`
+		User  int    `json:"user"`
 	} `json:"note"`
 	User struct {
 		Seen       bool `json:"seen"`

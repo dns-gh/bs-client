@@ -33,4 +33,20 @@ func (s *MySuite) TestEpisodesList(c *C) {
 	_, err = bs.EpisodesList(-1, -1)
 	c.Assert(err, NotNil)
 	c.Assert(err, Equals, errNoShowsFound)
+
+	shows, err := bs.ShowsSearch(tvShowTest)
+	c.Assert(err, IsNil)
+	c.Assert(len(shows), Equals, 1)
+
+	show, err := bs.ShowAdd(shows[0].ID)
+	c.Assert(err, IsNil)
+	c.Assert(show.InAccount, Equals, true)
+
+	episodes, err := bs.EpisodesList(shows[0].ID, -1)
+	c.Assert(err, IsNil)
+	c.Assert(episodes, HasLen, 1)
+
+	show, err = bs.ShowRemove(shows[0].ID)
+	c.Assert(err, IsNil)
+	c.Assert(show.InAccount, Equals, false)
 }
