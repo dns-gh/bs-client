@@ -56,15 +56,16 @@ type Show struct {
 		Poster string `json:"poster"`
 	} `json:"images"`
 	Aliases []string `json:"aliases"`
-	// remove temporarily until resolved by betaseries API: https://www.betaseries.com/bugs/api/383
-	/*User    struct {
-		Archived  bool   `json:"archived"`
-		Favorited bool   `json:"favorited"`
-		Remaining int    `json:"remaining"`
+	User    struct {
+		Archived  bool `json:"archived"`
+		Favorited bool `json:"favorited"`
+		// remove temporarily until resolved by betaseries API: https://www.betaseries.com/bugs/api/383
+		/*Remaining int    `json:"remaining"`
 		Status    int    `json:"status"`
 		Last      string `json:"last"`
 		Tags      string `json:"tags"`
-	} `json:"user"`*/
+		*/
+	} `json:"user"`
 	ResourceURL string `json:"resource_url"`
 	// specific to episodes/... API endpoints
 	Remaining int       `json:"remaining"`
@@ -214,8 +215,8 @@ func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]Sho
 	return bs.doGetShows(u, usedAPI)
 }
 
-func (bs *BetaSeries) showUpdate(method string, id int) (*Show, error) {
-	usedAPI := "/shows/show"
+func (bs *BetaSeries) showUpdate(method, endoint string, id int) (*Show, error) {
+	usedAPI := "/shows/" + endoint
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
 		return nil, errURLParsing
@@ -241,12 +242,22 @@ func (bs *BetaSeries) showUpdate(method string, id int) (*Show, error) {
 
 // ShowAdd adds the show represented by the given 'id' to the user's account.
 func (bs *BetaSeries) ShowAdd(id int) (*Show, error) {
-	return bs.showUpdate("POST", id)
+	return bs.showUpdate("POST", "show", id)
 }
 
 // ShowRemove removes the show represented by the given 'id' from user's account.
 func (bs *BetaSeries) ShowRemove(id int) (*Show, error) {
-	return bs.showUpdate("DELETE", id)
+	return bs.showUpdate("DELETE", "show", id)
+}
+
+// ShowArchive archives the show represented by the given 'id' from user's account
+func (bs *BetaSeries) ShowArchive(id int) (*Show, error) {
+	return bs.showUpdate("POST", "archive", id)
+}
+
+// ShowNotArchive remove from archives the show represented by the given 'id' from user's account
+func (bs *BetaSeries) ShowNotArchive(id int) (*Show, error) {
+	return bs.showUpdate("DELETE", "archive", id)
 }
 
 // Video represents the video data returned by the betaserie API

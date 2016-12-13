@@ -115,15 +115,19 @@ func (s *MySuite) TestShowsUpdate(c *C) {
 		[]errorsAPI{err4001},
 	})
 
-	shows, err := bs.ShowsSearch(tvShowTest)
-	c.Assert(err, IsNil)
-	c.Assert(len(shows), Equals, 1)
+	bs, _, id := makeClientAndAddShow(c)
 
-	show, err = bs.ShowAdd(shows[0].ID)
+	show, err = bs.ShowArchive(id)
 	c.Assert(err, IsNil)
 	c.Assert(show.InAccount, Equals, true)
+	c.Assert(show.User.Archived, Equals, true)
 
-	show, err = bs.ShowRemove(shows[0].ID)
+	show, err = bs.ShowNotArchive(id)
+	c.Assert(err, IsNil)
+	c.Assert(show.InAccount, Equals, true)
+	c.Assert(show.User.Archived, Equals, false)
+
+	show, err = bs.ShowRemove(id)
 	c.Assert(err, IsNil)
 	c.Assert(show.InAccount, Equals, false)
 }
