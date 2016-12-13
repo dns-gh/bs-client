@@ -28,14 +28,11 @@ type Episode struct {
 	Special     int    `json:"special"`
 	Description string `json:"description"`
 	Date        string `json:"date"`
-	// types of the 'note' field may change: https://www.betaseries.com/bugs/api/384
-	// comment it in the meantime.
-	/* Note        struct {
-		Total string `json:"total"`
-		Mean  string `json:"mean"`
-		User  int    `json:"user"`
+	Note        struct {
+		Total int     `json:"total"`
+		Mean  float32 `json:"mean"`
+		User  int     `json:"user"`
 	} `json:"note"`
-	*/
 	User struct {
 		Seen       bool `json:"seen"`
 		Downloaded bool `json:"downloaded"`
