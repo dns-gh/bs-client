@@ -96,7 +96,7 @@ func (bs *BetaSeries) PlanningIncoming() ([]Episode, error) {
 	return bs.doGetPlanning(u, usedAPI)
 }
 
-// PlanningMember returns a slice of episodes of the member 'id'
+// PlanningMember returns a slice of episodes of the member 'id'.
 // If 'id' is not set to a proper member it returns an error.
 // If 'id' is strictly negative, the returned episodes
 // are the ones of the identified member doing the request.

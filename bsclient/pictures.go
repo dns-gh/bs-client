@@ -12,7 +12,7 @@ var (
 	errIDMustBeStrictlyPositive = errors.New("id must be strictly positive")
 )
 
-// PicturesShows returns a picture of the tv show identified by 'id'
+// PicturesShows returns a picture of the tv show identified by 'id'.
 // If 'id' is negative, a default betaseries picture will be returned with an error code.
 // The optional 'width' and 'height' parameters must be both strictly
 // positive in order to be used.

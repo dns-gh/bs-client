@@ -38,45 +38,69 @@ See the https://github.com/dns-gh/bsbot
 
 Example of a test launch:
 ```
-$ go test ...bsclient -gocheck.vv -test.v -gocheck.f Test
+$ export BS_API_KEY=YOUR_BETASERIES_KEY && go test ...bsclient -gocheck.vv -test.v -gocheck.f Test
 === RUN   Test
+START: episodes_test.go:37: MySuite.TestEpisodesDownloaded
+PASS: episodes_test.go:37: MySuite.TestEpisodesDownloaded       0.951s
+
+START: episodes_test.go:14: MySuite.TestEpisodesList
+PASS: episodes_test.go:14: MySuite.TestEpisodesList     0.731s
+
+START: episodes_test.go:57: MySuite.TestEpisodesWatched
+PASS: episodes_test.go:57: MySuite.TestEpisodesWatched  0.752s
+
 START: bsclient_test.go:17: MySuite.TestNewBS
-PASS: bsclient_test.go:17: MySuite.TestNewBS    0.001s
+PASS: bsclient_test.go:17: MySuite.TestNewBS    0.000s
 
-START: bsclient_test.go:48: MySuite.TestNewBSGetToken
-PASS: bsclient_test.go:48: MySuite.TestNewBSGetToken    0.001s
+START: bsclient_test.go:50: MySuite.TestNewBSGetToken
+PASS: bsclient_test.go:50: MySuite.TestNewBSGetToken    0.001s
 
-START: bsclient_test.go:38: MySuite.TestNewBSGetTokenWithAPIKey
-PASS: bsclient_test.go:38: MySuite.TestNewBSGetTokenWithAPIKey  0.116s
+START: bsclient_test.go:40: MySuite.TestNewBSGetTokenWithAPIKey
+PASS: bsclient_test.go:40: MySuite.TestNewBSGetTokenWithAPIKey  0.146s
 
-START: bsclient_test.go:27: MySuite.TestNewBSGetTokenWithoutAPIKey
-PASS: bsclient_test.go:27: MySuite.TestNewBSGetTokenWithoutAPIKey       0.040s
+START: bsclient_test.go:28: MySuite.TestNewBSGetTokenWithoutAPIKey
+PASS: bsclient_test.go:28: MySuite.TestNewBSGetTokenWithoutAPIKey       0.077s
 
 START: news_test.go:10: MySuite.TestNewsLast
-PASS: news_test.go:10: MySuite.TestNewsLast     1.965s
+PASS: news_test.go:10: MySuite.TestNewsLast     0.095s
+
+START: pictures_test.go:9: MySuite.TestPicturesShows
+PASS: pictures_test.go:9: MySuite.TestPicturesShows     0.271s
 
 START: planning_test.go:24: MySuite.TestPlanningGeneral
-PASS: planning_test.go:24: MySuite.TestPlanningGeneral  0.283s
+PASS: planning_test.go:24: MySuite.TestPlanningGeneral  0.433s
 
 START: planning_test.go:40: MySuite.TestPlanningIncoming
-PASS: planning_test.go:40: MySuite.TestPlanningIncoming 0.091s
+PASS: planning_test.go:40: MySuite.TestPlanningIncoming 0.140s
 
 START: planning_test.go:53: MySuite.TestPlanningMember
-PASS: planning_test.go:53: MySuite.TestPlanningMember   0.144s
+PASS: planning_test.go:53: MySuite.TestPlanningMember   0.211s
 
 START: planning_test.go:90: MySuite.TestPlanningMemberWithCredentials
-PASS: planning_test.go:90: MySuite.TestPlanningMemberWithCredentials    0.258s
+PASS: planning_test.go:90: MySuite.TestPlanningMemberWithCredentials    0.359s
 
-START: shows_test.go:37: MySuite.TestShowsCharacters
-PASS: shows_test.go:37: MySuite.TestShowsCharacters     0.178s
+START: shows_test.go:57: MySuite.TestShowsCharacters
+PASS: shows_test.go:57: MySuite.TestShowsCharacters     0.193s
 
-START: shows_test.go:20: MySuite.TestShowsSearch
-PASS: shows_test.go:20: MySuite.TestShowsSearch 0.096s
+START: shows_test.go:75: MySuite.TestShowsList
+PASS: shows_test.go:75: MySuite.TestShowsList   0.286s
 
-OK: 11 passed
---- PASS: Test (3.19s)
+START: shows_test.go:38: MySuite.TestShowsRandom
+PASS: shows_test.go:38: MySuite.TestShowsRandom 0.209s
+
+START: shows_test.go:21: MySuite.TestShowsSearch
+PASS: shows_test.go:21: MySuite.TestShowsSearch 0.202s
+
+START: shows_test.go:109: MySuite.TestShowsUpdate
+PASS: shows_test.go:109: MySuite.TestShowsUpdate        0.604s
+
+START: shows_test.go:135: MySuite.TestShowsVideos
+PASS: shows_test.go:135: MySuite.TestShowsVideos        0.131s
+
+OK: 19 passed
+--- PASS: Test (5.85s)
 PASS
-ok      github.com/dns-gh/bs-client/bsclient    3.271s
+ok      github.com/dns-gh/bs-client/bsclient    6.018s
 ```
 
 ## LICENSE

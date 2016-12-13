@@ -253,7 +253,7 @@ func (bs *BetaSeries) ShowArchive(id int) (*Show, error) {
 	return bs.showUpdate("POST", "archive", id)
 }
 
-// ShowNotArchive remove from archives the show represented by the given 'id' from user's account
+// ShowNotArchive removes from archives the show represented by the given 'id' from user's account
 func (bs *BetaSeries) ShowNotArchive(id int) (*Show, error) {
 	return bs.showUpdate("DELETE", "archive", id)
 }
