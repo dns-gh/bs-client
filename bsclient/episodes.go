@@ -29,8 +29,8 @@ func (bs *BetaSeries) EpisodesList(showID, userID int) ([]Show, error) {
 	return bs.doGetShows(u, usedAPI)
 }
 
-func (bs *BetaSeries) episodeUpdate(method string, id int) (*Episode, error) {
-	usedAPI := "/episodes/downloaded"
+func (bs *BetaSeries) episodeUpdate(method, endpoint string, id int) (*Episode, error) {
+	usedAPI := "/episodes/" + endpoint
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
 		return nil, errURLParsing
@@ -56,10 +56,20 @@ func (bs *BetaSeries) episodeUpdate(method string, id int) (*Episode, error) {
 
 // EpisodeDownloaded marks the episode with the given 'id' as downloaded.
 func (bs *BetaSeries) EpisodeDownloaded(id int) (*Episode, error) {
-	return bs.episodeUpdate("POST", id)
+	return bs.episodeUpdate("POST", "downloaded", id)
 }
 
-// EpisodeNotDownloaded marks the episode with the given 'id' as downloaded.
+// EpisodeNotDownloaded marks the episode with the given 'id' as not downloaded.
 func (bs *BetaSeries) EpisodeNotDownloaded(id int) (*Episode, error) {
-	return bs.episodeUpdate("DELETE", id)
+	return bs.episodeUpdate("DELETE", "downloaded", id)
+}
+
+// EpisodeWatched marks the episode with the given 'id' as watched.
+func (bs *BetaSeries) EpisodeWatched(id int) (*Episode, error) {
+	return bs.episodeUpdate("POST", "watched", id)
+}
+
+// EpisodeNotWatched marks the episode with the given 'id' as not watched.
+func (bs *BetaSeries) EpisodeNotWatched(id int) (*Episode, error) {
+	return bs.episodeUpdate("DELETE", "watched", id)
 }
