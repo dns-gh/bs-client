@@ -106,6 +106,28 @@ func (s *MySuite) TestShowsList(c *C) {
 	c.Assert(shows[0].ID, Equals, 13842)
 }
 
+func (s *MySuite) TestShowsUpdate(c *C) {
+	key := os.Getenv("BS_API_KEY")
+	bs, err := NewBetaseriesClient(key, "Dev050", "developer")
+	show, err := bs.ShowAdd(0)
+	c.Assert(err, NotNil)
+	c.Assert(err, DeepEquals, &errAPI{
+		[]errorsAPI{err4001},
+	})
+
+	shows, err := bs.ShowsSearch(tvShowTest)
+	c.Assert(err, IsNil)
+	c.Assert(len(shows), Equals, 1)
+
+	show, err = bs.ShowAdd(shows[0].ID)
+	c.Assert(err, IsNil)
+	c.Assert(show.InAccount, Equals, true)
+
+	show, err = bs.ShowRemove(shows[0].ID)
+	c.Assert(err, IsNil)
+	c.Assert(show.InAccount, Equals, false)
+}
+
 func (s *MySuite) TestShowsVideos(c *C) {
 	key := os.Getenv("BS_API_KEY")
 	bs, err := NewBetaseriesClient(key, "", "")

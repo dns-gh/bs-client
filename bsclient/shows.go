@@ -22,10 +22,12 @@ type seasonDetails struct {
 
 // Show represents the show data returned by the betaserie API
 type Show struct {
-	ID             int             `json:"id"`
-	ThetvdbID      int             `json:"thetvdb_id"`
-	ImdbID         string          `json:"imdb_id"`
-	Title          string          `json:"title"`
+	// used in episodes/... and shows/... API endpoints
+	ID        int    `json:"id"`
+	ThetvdbID int    `json:"thetvdb_id"`
+	ImdbID    string `json:"imdb_id"`
+	Title     string `json:"title"`
+	// specific to shows/... API endpoints
 	Description    string          `json:"description"`
 	Seasons        string          `json:"seasons"`
 	SeasonsDetails []seasonDetails `json:"seasons_details"`
@@ -54,15 +56,19 @@ type Show struct {
 		Poster string `json:"poster"`
 	} `json:"images"`
 	Aliases []string `json:"aliases"`
-	User    struct {
+	// remove temporarily until resolved by betaseries API: https://www.betaseries.com/bugs/api/383
+	/*User    struct {
 		Archived  bool   `json:"archived"`
 		Favorited bool   `json:"favorited"`
 		Remaining int    `json:"remaining"`
 		Status    int    `json:"status"`
 		Last      string `json:"last"`
 		Tags      string `json:"tags"`
-	} `json:"user"`
+	} `json:"user"`*/
 	ResourceURL string `json:"resource_url"`
+	// specific to episodes/... API endpoints
+	Remaining int       `json:"remaining"`
+	Unseen    []Episode `json:"unseen"`
 }
 
 type shows struct {
@@ -70,8 +76,13 @@ type shows struct {
 	Errors []interface{} `json:"errors"`
 }
 
+type showItem struct {
+	Show   *Show         `json:"show"`
+	Errors []interface{} `json:"errors"`
+}
+
 func (bs *BetaSeries) doGetShows(u *url.URL, usedAPI string) ([]Show, error) {
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +165,7 @@ func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 	q.Set("id", strconv.Itoa(id))
 	u.RawQuery = q.Encode()
 
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}
@@ -203,6 +214,41 @@ func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]Sho
 	return bs.doGetShows(u, usedAPI)
 }
 
+func (bs *BetaSeries) showUpdate(method string, id int) (*Show, error) {
+	usedAPI := "/shows/show"
+	u, err := url.Parse(bs.baseURL + usedAPI)
+	if err != nil {
+		return nil, errURLParsing
+	}
+	q := u.Query()
+	q.Set("id", strconv.Itoa(id))
+	u.RawQuery = q.Encode()
+
+	resp, err := bs.do(method, u)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	show := &showItem{}
+	err = bs.decode(show, resp, usedAPI, u.RawQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	return show.Show, nil
+}
+
+// ShowAdd adds the show represented by the given 'id' to the user's account.
+func (bs *BetaSeries) ShowAdd(id int) (*Show, error) {
+	return bs.showUpdate("POST", id)
+}
+
+// ShowRemove removes the show represented by the given 'id' from user's account.
+func (bs *BetaSeries) ShowRemove(id int) (*Show, error) {
+	return bs.showUpdate("DELETE", id)
+}
+
 // Video represents the video data returned by the betaserie API
 type Video struct {
 	ID         int    `json:"id"`
@@ -242,7 +288,7 @@ func (bs *BetaSeries) ShowsVideos(id, tvdbID int) ([]Video, error) {
 	}
 	u.RawQuery = q.Encode()
 
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}

@@ -28,11 +28,14 @@ type Episode struct {
 	Special     int    `json:"special"`
 	Description string `json:"description"`
 	Date        string `json:"date"`
-	Note        struct {
-		Total int `json:"total"`
-		Mean  int `json:"mean"`
-		User  int `json:"user"`
+	// types of the 'note' field may change: https://www.betaseries.com/bugs/api/384
+	// comment it in the meantime.
+	/* Note        struct {
+		Total string `json:"total"`
+		Mean  string `json:"mean"`
+		User  int    `json:"user"`
 	} `json:"note"`
+	*/
 	User struct {
 		Seen       bool `json:"seen"`
 		Downloaded bool `json:"downloaded"`
@@ -47,7 +50,7 @@ type episodes struct {
 }
 
 func (bs *BetaSeries) doGetPlanning(u *url.URL, usedAPI string) ([]Episode, error) {
-	resp, err := bs.doGet(u)
+	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
 	}
