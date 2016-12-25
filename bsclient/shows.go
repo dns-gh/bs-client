@@ -319,3 +319,19 @@ func (bs *BetaSeries) ShowsVideos(id, tvdbID int) ([]Video, error) {
 
 	return data.Videos, nil
 }
+
+// ShowsEpisodes returns a slice of episode for the show represented by the given 'id'.
+// Optional 'season' and 'episode' parameters can be used for precision.
+func (bs *BetaSeries) ShowsEpisodes(id, season, episode int) ([]Episode, error) {
+	usedAPI := "/shows/episodes"
+	u, err := url.Parse(bs.baseURL + usedAPI)
+	if err != nil {
+		return nil, errURLParsing
+	}
+	q := u.Query()
+	q.Set("id", strconv.Itoa(id))
+	q.Set("season", strconv.Itoa(season))
+	q.Set("episode", strconv.Itoa(episode))
+	u.RawQuery = q.Encode()
+	return bs.doGetEpisodes(u, usedAPI)
+}

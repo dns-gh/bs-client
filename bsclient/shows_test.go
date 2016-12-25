@@ -163,3 +163,28 @@ func (s *MySuite) TestShowsVideos(c *C) {
 	c.Assert(err, Equals, errIDNotProperlySet)
 	c.Assert(len(videos), Equals, 0)
 }
+
+func (s *MySuite) TestShowsEpisodes(c *C) {
+	key := os.Getenv("BS_API_KEY")
+	bs, err := NewBetaseriesClient(key, "", "")
+	c.Assert(err, IsNil)
+	shows, err := bs.ShowsSearch(tvShowTest)
+	c.Assert(err, IsNil)
+	c.Assert(shows, HasLen, 1)
+
+	episodes, err := bs.ShowsEpisodes(shows[0].ID, 0, 0)
+	c.Assert(err, IsNil)
+	c.Assert(episodes, HasLen, 68)
+
+	episodes, err = bs.ShowsEpisodes(shows[0].ID, 1, 0)
+	c.Assert(err, IsNil)
+	c.Assert(episodes, HasLen, 12)
+
+	episodes, err = bs.ShowsEpisodes(shows[0].ID, 1, 1)
+	c.Assert(err, IsNil)
+	c.Assert(episodes, HasLen, 1)
+
+	episodes, err = bs.ShowsEpisodes(shows[0].ID, -1, -1)
+	c.Assert(err, IsNil)
+	c.Assert(episodes, HasLen, 68)
+}

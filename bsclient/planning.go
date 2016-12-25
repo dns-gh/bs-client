@@ -46,7 +46,7 @@ type episodes struct {
 	Errors   []interface{} `json:"errors"`
 }
 
-func (bs *BetaSeries) doGetPlanning(u *url.URL, usedAPI string) ([]Episode, error) {
+func (bs *BetaSeries) doGetEpisodes(u *url.URL, usedAPI string) ([]Episode, error) {
 	resp, err := bs.do("GET", u)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (bs *BetaSeries) PlanningGeneral(date string, before, after int) ([]Episode
 	q.Set("before", strconv.Itoa(before))
 	q.Set("after", strconv.Itoa(after))
 	u.RawQuery = q.Encode()
-	return bs.doGetPlanning(u, usedAPI)
+	return bs.doGetEpisodes(u, usedAPI)
 }
 
 // PlanningIncoming returns a slice of the first episodes of each tv show
@@ -90,7 +90,7 @@ func (bs *BetaSeries) PlanningIncoming() ([]Episode, error) {
 	if err != nil {
 		return nil, errURLParsing
 	}
-	return bs.doGetPlanning(u, usedAPI)
+	return bs.doGetEpisodes(u, usedAPI)
 }
 
 // PlanningMember returns a slice of episodes of the member 'id'.
@@ -113,5 +113,5 @@ func (bs *BetaSeries) PlanningMember(id int, unseen bool, month string) ([]Episo
 	q.Set("unseen", strconv.FormatBool(unseen))
 	q.Set("month", month)
 	u.RawQuery = q.Encode()
-	return bs.doGetPlanning(u, usedAPI)
+	return bs.doGetEpisodes(u, usedAPI)
 }
