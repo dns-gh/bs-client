@@ -137,7 +137,7 @@ func (bs *BetaSeries) ShowsRandom(num int, summary bool) ([]Show, error) {
 	return bs.doGetShows(u, usedAPI)
 }
 
-// Character represents the character data returned by the betaserie API
+// Character represents the character data returned by the betaserie API.
 type Character struct {
 	ID          int    `json:"id"`
 	ShowID      int    `json:"show_id"`
@@ -152,8 +152,7 @@ type characters struct {
 	Characters []Character `json:"characters"`
 }
 
-// ShowsCharacters returns a slice of shows found with the given ID
-// The slice is of size 100 maximum and the results are ordered by popularity by default.
+// ShowsCharacters returns a slice of characters found with the given ID.
 func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 	usedAPI := "/shows/characters"
 	u, err := url.Parse(bs.baseURL + usedAPI)
@@ -236,6 +235,11 @@ func (bs *BetaSeries) showUpdate(method, endoint string, id int) (*Show, error) 
 	}
 
 	return show.Show, nil
+}
+
+// ShowDisplay returns the show information represented by the given 'id' from the user's account.
+func (bs *BetaSeries) ShowDisplay(id int) (*Show, error) {
+	return bs.showUpdate("GET", "display", id)
 }
 
 // ShowAdd adds the show represented by the given 'id' to the user's account.

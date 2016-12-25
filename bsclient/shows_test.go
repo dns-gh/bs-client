@@ -127,6 +127,11 @@ func (s *MySuite) TestShowsUpdate(c *C) {
 	c.Assert(show.InAccount, Equals, true)
 	c.Assert(show.User.Archived, Equals, false)
 
+	show, err = bs.ShowDisplay(id)
+	c.Assert(err, IsNil)
+	c.Assert(show.InAccount, Equals, true)
+	c.Assert(show.Status, Equals, "Ended")
+
 	show, err = bs.ShowRemove(id)
 	c.Assert(err, IsNil)
 	c.Assert(show.InAccount, Equals, false)
