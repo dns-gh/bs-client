@@ -18,6 +18,7 @@ func (bs *BetaSeries) EpisodesList(showID, userID int) ([]Show, error) {
 		return nil, errURLParsing
 	}
 	q := u.Query()
+	q.Set("specials", "true")
 	if showID >= 0 {
 		q.Set("showId", strconv.Itoa(showID))
 	}
