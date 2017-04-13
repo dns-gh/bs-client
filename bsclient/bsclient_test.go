@@ -54,7 +54,7 @@ func (s *MySuite) TestNewBSGetToken(c *C) {
 	c.Assert(bs, NotNil)
 	_, err = bs.getToken()
 	c.Assert(err, NotNil)
-	c.Assert(err, Equals, errNoToken)
+	c.Assert(err, Equals, ErrNoToken)
 }
 
 func makeClientAndAddShow(c *C) (*BetaSeries, string, int) {

@@ -72,7 +72,7 @@ func (bs *BetaSeries) PlanningGeneral(date string, before, after int) ([]Episode
 	usedAPI := "/planning/general"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("date", date)
@@ -88,7 +88,7 @@ func (bs *BetaSeries) PlanningIncoming() ([]Episode, error) {
 	usedAPI := "/planning/incoming"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	return bs.doGetEpisodes(u, usedAPI)
 }
@@ -104,7 +104,7 @@ func (bs *BetaSeries) PlanningMember(id int, unseen bool, month string) ([]Episo
 	usedAPI := "/planning/member"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	if id >= 0 {

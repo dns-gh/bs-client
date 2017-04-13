@@ -20,8 +20,8 @@ const (
 )
 
 var (
-	errNoToken    = errors.New("no token")
-	errURLParsing = errors.New("url parsing error")
+	ErrNoToken    = errors.New("no token")
+	ErrURLParsing = errors.New("url parsing error")
 )
 
 type errorsAPI struct {
@@ -67,7 +67,7 @@ func (bs *BetaSeries) getToken() (string, error) {
 	if bs.token != nil {
 		return bs.token.Token, nil
 	}
-	return "", errNoToken
+	return "", ErrNoToken
 }
 
 // NewBetaseriesClient creates a betaseries web client

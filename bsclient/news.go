@@ -31,7 +31,7 @@ func (bs *BetaSeries) NewsLast(number int, tailored bool) ([]News, error) {
 	usedAPI := "/news/last"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("number", strconv.Itoa(number))

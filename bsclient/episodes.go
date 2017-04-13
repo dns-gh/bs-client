@@ -15,7 +15,7 @@ func (bs *BetaSeries) EpisodesList(showID, userID int) ([]Show, error) {
 	usedAPI := "/episodes/list"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("specials", "true")
@@ -34,7 +34,7 @@ func (bs *BetaSeries) episodeUpdate(method, endpoint string, id int) (*Episode, 
 	usedAPI := "/episodes/" + endpoint
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("id", strconv.Itoa(id))

@@ -106,7 +106,7 @@ func (bs *BetaSeries) ShowsSearch(query string) ([]Show, error) {
 	usedAPI := "/shows/search"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("title", strings.ToLower(query))
@@ -123,7 +123,7 @@ func (bs *BetaSeries) ShowsRandom(num int, summary bool) ([]Show, error) {
 	usedAPI := "/shows/random"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	if num >= 0 {
@@ -157,7 +157,7 @@ func (bs *BetaSeries) ShowsCharacters(id int) ([]Character, error) {
 	usedAPI := "/shows/characters"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("id", strconv.Itoa(id))
@@ -191,7 +191,7 @@ func (bs *BetaSeries) ShowsList(since, starting string, start, limit int) ([]Sho
 	usedAPI := "/shows/list"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("order", "popularity")
@@ -216,7 +216,7 @@ func (bs *BetaSeries) showUpdate(method, endoint string, id int) (*Show, error) 
 	usedAPI := "/shows/" + endoint
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("id", strconv.Itoa(id))
@@ -287,7 +287,7 @@ func (bs *BetaSeries) ShowsVideos(id, tvdbID int) ([]Video, error) {
 	usedAPI := "/shows/videos"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	if id > 0 && tvdbID > 0 {
@@ -326,7 +326,7 @@ func (bs *BetaSeries) ShowsEpisodes(id, season, episode int) ([]Episode, error) 
 	usedAPI := "/shows/episodes"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return nil, errURLParsing
+		return nil, ErrURLParsing
 	}
 	q := u.Query()
 	q.Set("id", strconv.Itoa(id))

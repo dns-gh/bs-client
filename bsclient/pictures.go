@@ -20,7 +20,7 @@ func (bs *BetaSeries) PicturesShows(id, width, height int) (string, error) {
 	usedAPI := "/pictures/shows"
 	u, err := url.Parse(bs.baseURL + usedAPI)
 	if err != nil {
-		return "", errURLParsing
+		return "", ErrURLParsing
 	}
 	q := u.Query()
 	if id <= 0 {
